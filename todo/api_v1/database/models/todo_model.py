@@ -2,7 +2,7 @@ import datetime
 
 from sqlalchemy import Column, Integer, String, DateTime, Boolean
 
-from database.config import Base
+from todo.api_v1.database.config import Base
 
 
 class TodoModel(Base):
@@ -18,7 +18,7 @@ class TodoModel(Base):
     created_at = Column(
         DateTime, default=lambda: datetime.datetime.utcnow(), nullable=False)
     updated_at = Column(DateTime, default=lambda: datetime.datetime.utcnow(
-    ), on_update=lambda: datetime.datetime.utcnow(), nullable=False)
+    ), onupdate=lambda: datetime.datetime.utcnow(), nullable=False)
 
     def to_dict(self):
         return {

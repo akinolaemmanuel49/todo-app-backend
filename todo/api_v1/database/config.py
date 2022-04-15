@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-from api_v1.config import Config
+from todo.api_v1.config import Config
 
 """Database Configuration"""
 SQLALCHEMY_DATABASE_URI = Config.SQLALCHEMY_DATABASE_URI
