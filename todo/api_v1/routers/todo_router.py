@@ -17,43 +17,45 @@ from todo.api_v1.database.actions.todo_actions import (create_todo,
 router = APIRouter(prefix=Config.API_VERSION_STRING, tags=['Todo'])
 
 
-@router.post('/todos', response_model=Todo)
+@router.post('/todos', tags=['Todo'])
 def create_todo_route(todo: TodoCreate,
                       db: Session = Depends(get_db)) -> dict:
-    return create_todo(db=db, title=todo.title, description=todo.description)
+    create_todo(db=db, todo=todo.todo)
+    return {'message': 'Todo created successfully'}
 
 
-@router.get('/todos/complete', response_model=List[Todo])
+@router.get('/todos/complete', response_model=List[Todo], tags=['Todo'])
 def get_todos_is_done_route(db: Session = Depends(get_db)):
     return get_todo_list_is_done(db=db)
 
 
-@router.get('/todos/incomplete', response_model=List[Todo])
+@router.get('/todos/incomplete', response_model=List[Todo], tags=['Todo'])
 def get_todos_is_not_done_route(db: Session = Depends(get_db)):
     return get_todo_list_not_done(db=db)
 
 
-@router.get('/todos', response_model=List[Todo])
+@router.get('/todos', response_model=List[Todo], tags=['Todo'])
 def get_todos_route(db: Session = Depends(get_db)):
     return get_todo_list(db=db)
 
 
-@router.get('/todos/{todo_id}', response_model=Todo)
+@router.get('/todos/{todo_id}', response_model=Todo, tags=['Todo'])
 def get_todo_route(db: Session = Depends(get_db), todo_id: int = None):
     return get_todo(db=db, todo_id=todo_id)
 
 
-@router.put('/todos/{todo_id}', response_model=Todo)
+@router.put('/todos/{todo_id}', tags=['Todo'])
 def update_todo_route(todo_id: int,
                       todo: TodoUpdate,
                       db: Session = Depends(get_db)):
-    return update_todo(db=db,
-                       todo_id=todo_id,
-                       title=todo.title,
-                       description=todo.description,
-                       done=todo.done)
+    update_todo(db=db,
+                todo_id=todo_id,
+                todo=todo.todo,
+                done=todo.done)
+    return {'message': 'Todo updated successfully'}
 
 
-@router.delete('/todos/{todo_id}', response_model=Todo)
+@router.delete('/todos/{todo_id}', tags=['Todo'])
 def delete_todo_route(db: Session = Depends(get_db), todo_id: int = None, ):
-    return delete_todo(db=db, todo_id=todo_id)
+    delete_todo(db=db, todo_id=todo_id)
+    return {'message': 'Todo deleted successfully'}

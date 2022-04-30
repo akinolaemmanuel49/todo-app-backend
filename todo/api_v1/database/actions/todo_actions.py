@@ -6,14 +6,14 @@ from todo.api_v1.database.models.todo_model import TodoModel
 from todo.api_v1.database.base_actions import save_to_db, delete_from_db
 
 
-def create_todo(db: Session, title, description) -> TodoModel:
+def create_todo(db: Session, todo) -> TodoModel:
     """
     Create a new todo instance
     """
     # Create a new todo instance
-    todo = TodoModel(title=title, description=description)
+    todo_create = TodoModel(todo=todo)
     # Return the new todo instance
-    return save_to_db(db=db, instance=todo)
+    save_to_db(db=db, instance=todo_create)
 
 
 def get_todo(db: Session, todo_id: int) -> TodoModel:
@@ -34,19 +34,17 @@ def get_todo_list(db: Session) -> List[TodoModel]:
 
 def update_todo(db: Session,
                 todo_id: int,
-                title: str,
-                description: str,
+                todo: str,
                 done: bool) -> TodoModel:
     """
     Update a todo instance
     """
     # Get todo instance to update
-    todo = get_todo(db=db, todo_id=todo_id)
+    todo_update = get_todo(db=db, todo_id=todo_id)
     # Update todo instance
-    todo.title = title
-    todo.description = description
-    todo.done = done
-    return save_to_db(db=db, instance=todo)
+    todo_update.todo = todo
+    todo_update.done = done
+    save_to_db(db=db, instance=todo_update)
 
 
 def get_todo_list_is_done(db: Session) -> List[TodoModel]:
@@ -70,6 +68,6 @@ def delete_todo(db: Session, todo_id: int) -> TodoModel:
     Delete a todo instance
     """
     # Get todo instance to delete
-    todo = get_todo(db=db, todo_id=todo_id)
+    todo_delete = get_todo(db=db, todo_id=todo_id)
     # Delete todo instance
-    return delete_from_db(db=db, instance=todo)
+    delete_from_db(db=db, instance=todo_delete)

@@ -1,17 +1,15 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, validator, ValidationError
 
 
 class TodoBase(BaseModel):
-    title: str
-    description: str = None
+    todo: str
 
-    class Config:
-        schema_extra = {
-            "example": {
-                "title": "Buy milk",
-                "description": "Milk for baby",
-            }
-        }
+    @validator('todo')
+    def validate_todo(cls, v):
+        if len(v) > 128:
+            raise ValueError(
+                'Todo must be less than 128 characters')
+        return v
 
 
 class TodoCreate(TodoBase):
@@ -21,20 +19,10 @@ class TodoCreate(TodoBase):
 class TodoUpdate(TodoBase):
     done: bool
 
-    class Config:
-        schema_extra = {
-            "example": {
-                "title": "Buy milk",
-                "description": "Milk for baby",
-                "done": False,
-            }
-        }
-
 
 class Todo(BaseModel):
     id: int
-    title: str
-    description: str = None
+    todo: str
     done: bool = False
 
     class Config:
@@ -42,8 +30,7 @@ class Todo(BaseModel):
 
         schema_extra = {
             "example": {
-                "title": "Buy milk",
-                "description": "Milk for baby",
+                "todo": "Buy milk",
                 "done": False
             }
         }
