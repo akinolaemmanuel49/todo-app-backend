@@ -29,7 +29,26 @@ def get_todo_list(db: Session) -> List[TodoModel]:
     Get all todos instances
     """
     # Return all todos instances
-    return db.query(TodoModel).all()
+    return db.query(TodoModel).order_by(TodoModel.id.desc()).all()
+
+
+def toggle_done(db: Session, todo_id: int) -> TodoModel:
+    """
+    Toggle a todo instance done
+    """
+    # Get todo instance to toggle
+    todo_toggle = get_todo(db=db, todo_id=todo_id)
+    # Toggle todo instance
+    todo_toggle.done = not todo_toggle.done
+    save_to_db(db=db, instance=todo_toggle)
+
+
+def get_done_state(db: Session, todo_id: int) -> TodoModel:
+    """
+    Get whether a todo instance is done or not.
+    """
+    todo_done = get_todo(db=db, todo_id=todo_id)
+    return todo_done.done
 
 
 def update_todo(db: Session,

@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from todo.api_v1.config import Config
 from todo.api_v1.routers.todo_router import router as todo_router
+from todo.api_v1.routers.user_router import router as user_router
 from todo.api_v1.database.config import engine, Base
 
 app = FastAPI(title="Todo API",
@@ -24,9 +25,11 @@ app.add_middleware(
 )
 # include api routes
 app.include_router(todo_router)
-
+app.include_router(user_router)
 
 # connect to database on start
+
+
 @app.on_event('startup')
 async def startup():
     Base.metadata.create_all(bind=engine)
