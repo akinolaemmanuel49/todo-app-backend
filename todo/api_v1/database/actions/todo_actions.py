@@ -51,36 +51,19 @@ def get_done_state(db: Session, todo_id: int) -> TodoModel:
     return todo_done.done
 
 
-def update_todo(db: Session,
-                todo_id: int,
-                todo: str,
-                done: bool) -> TodoModel:
-    """
-    Update a todo instance
-    """
-    # Get todo instance to update
-    todo_update = get_todo(db=db, todo_id=todo_id)
-    # Update todo instance
-    todo_update.todo = todo
-    todo_update.done = done
-    save_to_db(db=db, instance=todo_update)
-
-
-def get_todo_list_is_done(db: Session) -> List[TodoModel]:
-    """
-    Get all todos instances that are done
-    """
-    # Return all todos instances
-    return db.query(TodoModel).filter(TodoModel.done == True).all()
-
-
-def get_todo_list_not_done(db: Session) -> List[TodoModel]:
-    """
-    Get all todos instances that are not done
-    """
-    # Return all todos instances
-    return db.query(TodoModel).filter(TodoModel.done == False).all()
-
+# def update_todo(db: Session,
+#                 todo_id: int,
+#                 todo: str,
+#                 done: bool) -> TodoModel:
+#     """
+#     Update a todo instance
+#     """
+#     # Get todo instance to update
+#     todo_update = get_todo(db=db, todo_id=todo_id)
+#     # Update todo instance
+#     todo_update.todo = todo
+#     todo_update.done = done
+#     save_to_db(db=db, instance=todo_update)
 
 def delete_todo(db: Session, todo_id: int) -> TodoModel:
     """
