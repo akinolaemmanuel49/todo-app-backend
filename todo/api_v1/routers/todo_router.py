@@ -7,14 +7,13 @@ from sqlalchemy.orm import Session
 from todo.api_v1.config import Config
 from todo.api_v1.schemas.todo_schema import Todo, TodoCreate, TodoUpdate
 from todo.api_v1.dependencies.database import get_db
-from todo.api_v1.database.actions.todo_actions import (create_todo, get_done_state,
+from todo.api_v1.database.actions.todo_actions import (create_todo,
+                                                       get_done_state,
                                                        get_todo_list,
                                                        toggle_done,
-                                                       update_todo,
                                                        delete_todo,
                                                        get_todo,
-                                                       get_todo_list_is_done,
-                                                       get_todo_list_not_done)
+                                                       )
 
 router = APIRouter(prefix=Config.API_VERSION_STRING, tags=['Todo'])
 
@@ -63,4 +62,5 @@ def get_todo_done_state_route(todo_id: int,
 @router.delete('/todos/{todo_id}', tags=['Todo'])
 def delete_todo_route(db: Session = Depends(get_db), todo_id: int = None, ):
     delete_todo(db=db, todo_id=todo_id)
+    return {'message': 'Todo deleted successfully'}
     return {'message': 'Todo deleted successfully'}
