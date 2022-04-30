@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from todo.api_v1.config import Config
 from todo.api_v1.routers.todo_router import router as todo_router
@@ -10,6 +11,17 @@ app = FastAPI(title="Todo API",
               redoc_url=Config.API_VERSION_STRING+"/redoc",
               version="1.0.0")
 
+origins = [
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 # include api routes
 app.include_router(todo_router)
 
