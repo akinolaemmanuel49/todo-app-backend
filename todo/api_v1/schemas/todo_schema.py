@@ -1,4 +1,4 @@
-from pydantic import BaseModel, validator, ValidationError
+from pydantic import BaseModel, validator
 
 
 class TodoBase(BaseModel):
@@ -6,10 +6,13 @@ class TodoBase(BaseModel):
 
     @validator('todo')
     def validate_todo(cls, v):
-        if len(v) > 128:
+        if len(v) > 64:
             raise ValueError(
-                'Todo must be less than 128 characters')
-        return v
+                'Todo must be less than 64 characters')
+        elif len(v) < 1:
+            raise ValueError('Todo must be at least 1 character')
+        else:
+            return v
 
 
 class TodoCreate(TodoBase):
