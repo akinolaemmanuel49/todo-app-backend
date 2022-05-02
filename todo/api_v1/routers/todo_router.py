@@ -1,7 +1,6 @@
 from typing import List
 
 from fastapi import APIRouter, Depends
-from fastapi.encoders import jsonable_encoder
 from sqlalchemy.orm import Session
 
 from todo.api_v1.config import Config
@@ -21,17 +20,26 @@ router = APIRouter(prefix=Config.API_VERSION_STRING, tags=['Todo'])
 @router.post('/todos', tags=['Todo'])
 def create_todo_route(todo: TodoCreate,
                       db: Session = Depends(get_db)) -> dict:
+    """
+    API route to create a new todo instance
+    """
     create_todo(db=db, todo=todo.todo)
     return {'message': 'Todo created successfully'}
 
 
 @router.get('/todos', response_model=List[Todo], tags=['Todo'])
 def get_todos_route(db: Session = Depends(get_db)):
-    return jsonable_encoder(get_todo_list(db=db))
+    """
+    API route to get all todos instances
+    """
+    return get_todo_list(db=db)
 
 
 @router.get('/todos/{todo_id}', response_model=Todo, tags=['Todo'])
 def get_todo_route(db: Session = Depends(get_db), todo_id: int = None):
+    """
+    API route to get a todo instance by id
+    """
     return get_todo(db=db, todo_id=todo_id)
 
 
@@ -49,6 +57,7 @@ def get_todo_route(db: Session = Depends(get_db), todo_id: int = None):
 @router.get('/todos/{todo_id}/toggle', tags=['Todo'])
 def toggle_done_route(todo_id: int,
                       db: Session = Depends(get_db)):
+    """API route to toggle a todo instance done state"""
     toggle_done(db=db, todo_id=todo_id)
     return get_done_state(db=db, todo_id=todo_id)
 
@@ -56,10 +65,12 @@ def toggle_done_route(todo_id: int,
 @router.get('/todos/{todo_id}/state', tags=['Todo'], response_model=bool)
 def get_todo_done_state_route(todo_id: int,
                               db: Session = Depends(get_db)):
+    """API route to get a todo instance done state"""
     return get_done_state(db=db, todo_id=todo_id)
 
 
 @router.delete('/todos/{todo_id}', tags=['Todo'])
 def delete_todo_route(db: Session = Depends(get_db), todo_id: int = None, ):
+    """API route to delete a todo instance"""
     delete_todo(db=db, todo_id=todo_id)
     return {'message': 'Todo deleted successfully'}

@@ -21,6 +21,17 @@ class UserCreate(UserBase):
     password: str
     confirm_password: str
 
+    class Config:
+        orm_mode = True
+        schema_extra = {
+            "example": {
+                "username": "JohnDoe",
+                "email": "johndoe@mail.com",
+                "created_at": "2020-01-01T00:00:00",
+                "updated_at": "2020-01-01T00:00:00"
+            }
+        }
+
     @validator("password")
     def validate_password(cls, v):
         if len(v) > 64:
