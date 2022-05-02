@@ -101,3 +101,7 @@ class Credentials(BaseModel):
 class TokenData(BaseModel):
     access_token: str
     refresh_token: str
+
+
+class AccessTokenData(BaseModel):
+    access_token: str

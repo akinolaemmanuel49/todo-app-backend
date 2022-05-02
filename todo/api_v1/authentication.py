@@ -24,8 +24,7 @@ class Authentication:
             'iat': datetime.utcnow(),
             'sub': username
         }
-        return jwt.encode(payload, self.jwt_secret_key,
-                          algorithm=Config.JWT_ALGORITHM).decode('utf-8')
+        return jwt.encode(payload, self.jwt_secret_key, algorithm=Config.JWT_ALGORITHM)
 
     def decode_jwt_token(self, token: str) -> Optional[str]:
         try:
