@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 
 from dotenv import load_dotenv
 
@@ -18,3 +19,8 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     SQLALCHEMY_ECHO = False
     API_VERSION_STRING = '/api/v1'
+    ENCRYPTION_SCHEMES = ['bcrypt']
+    JWT_SECRET_KEY = os.environ.get('JWT_SECRET_KEY')
+    JWT_ALGORITHM = os.environ.get('JWT_ALGORITHM')
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=30)
+    JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=1)

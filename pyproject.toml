@@ -7,9 +7,12 @@ authors = ["Abiodun Akinola <akinolaemmanuel49@gmail.com>"]
 [tool.poetry.dependencies]
 python = "^3.8"
 fastapi = "^0.75.1"
-SQLAlchemy = {extras = ["postgres"], version = "^1.4.35"}
-uvicorn = {extras = ["standard"], version = "^0.17.6"}
+SQLAlchemy = { extras = ["postgres"], version = "^1.4.35" }
+uvicorn = { extras = ["standard"], version = "^0.17.6" }
 psycopg2 = "^2.9.3"
+PyJWT = "^2.3.0"
+passlib = { extras = ["bcrypt"], version = "^1.7.4" }
+pydantic = { extras = ["email"], version = "^1.9.0" }
 
 [tool.poetry.dev-dependencies]
 autopep8 = "^1.6.0"

@@ -21,6 +21,17 @@ class UserCreate(UserBase):
     password: str
     confirm_password: str
 
+    class Config:
+        orm_mode = True
+        schema_extra = {
+            "example": {
+                "username": "JohnDoe",
+                "email": "johndoe@mail.com",
+                "password": "password",
+                "confirm_password": "password"
+            }
+        }
+
     @validator("password")
     def validate_password(cls, v):
         if len(v) > 64:
@@ -62,3 +73,35 @@ class User(BaseModel):
                 "updated_at": "2020-01-01T00:00:00"
             }
         }
+
+
+class Credentials(BaseModel):
+    username: str
+    password: str
+
+    @validator("username")
+    def check_username(cls, v):
+        if len(v) < 3:
+            raise ValueError("Username must be atleast than 2 characters")
+        elif len(v) > 10:
+            raise ValueError("Username must be less than 10 characters")
+        else:
+            return v
+
+    @validator("password")
+    def check_password(cls, v):
+        if len(v) < 6:
+            raise ValueError("Password must be atleast than 6 characters")
+        elif len(v) > 64:
+            raise ValueError("Password must be less than 64 characters")
+        else:
+            return v
+
+
+class TokenData(BaseModel):
+    access_token: str
+    refresh_token: str
+
+
+class AccessTokenData(BaseModel):
+    access_token: str
