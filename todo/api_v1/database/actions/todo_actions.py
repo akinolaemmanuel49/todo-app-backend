@@ -6,7 +6,7 @@ from todo.api_v1.database.models.todo_model import TodoModel
 from todo.api_v1.database.base_actions import save_to_db, delete_from_db
 
 
-def create_todo(db: Session, todo) -> TodoModel:
+def create_todo(db: Session, todo) -> None:
     """
     Create a new todo instance
     """
@@ -32,7 +32,15 @@ def get_todo_list(db: Session) -> List[TodoModel]:
     return db.query(TodoModel).order_by(TodoModel.id.desc()).all()
 
 
-def toggle_done(db: Session, todo_id: int) -> TodoModel:
+def get_user_todo_list(db: Session, user_id: int) -> List[TodoModel]:
+    """
+    Get all todos instances belonging to a user
+    """
+    # Return all todos instances for a user
+    return db.query(TodoModel).filter(TodoModel.user_id == user_id).order_by(TodoModel.id.desc()).all()
+
+
+def toggle_done(db: Session, todo_id: int) -> None:
     """
     Toggle a todo instance done
     """
@@ -43,7 +51,7 @@ def toggle_done(db: Session, todo_id: int) -> TodoModel:
     save_to_db(db=db, instance=todo_toggle)
 
 
-def get_done_state(db: Session, todo_id: int) -> TodoModel:
+def get_done_state(db: Session, todo_id: int) -> bool:
     """
     Get whether a todo instance is done or not.
     """
@@ -65,7 +73,7 @@ def get_done_state(db: Session, todo_id: int) -> TodoModel:
 #     todo_update.done = done
 #     save_to_db(db=db, instance=todo_update)
 
-def delete_todo(db: Session, todo_id: int) -> TodoModel:
+def delete_todo(db: Session, todo_id: int) -> None:
     """
     Delete a todo instance
     """

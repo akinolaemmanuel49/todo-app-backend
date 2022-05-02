@@ -1,19 +1,23 @@
-import email
 from sqlalchemy.orm import Session
 
-from todo.api_v1.database.models.todo_model import TodoModel
+# from todo.api_v1.database.models.todo_model import TodoModel
 from todo.api_v1.database.models.user_model import UserModel
-from todo.api_v1.database.base_actions import save_to_db, delete_from_db
+from todo.api_v1.database.base_actions import save_to_db
 from todo.api_v1.schemas.user_schema import UserCreate
+from todo.api_v1.authentication import Authentication
+
+authentication_handler = Authentication()
 
 
-def create_user(db: Session, user: UserCreate) -> UserModel:
+def create_user(db: Session, user: UserCreate) -> None:
     """
     Create a new user instance
     """
+    # Hash the password
+    user.password = authentication_handler.encode_password(user.password)
     # Create a new user instance
     user_create = UserModel(
-        username=user.username, email=user.email, hashed_password=user.password + "salt")
+        username=user.username, email=user.email, hashed_password=user.password)
     # Return the new user instance
     save_to_db(db=db, instance=user_create)
 
