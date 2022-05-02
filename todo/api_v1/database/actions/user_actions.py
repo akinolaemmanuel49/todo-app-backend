@@ -28,3 +28,11 @@ def get_user_by_id(db: Session, user_id: int) -> UserModel:
     """
     # Get a user instance
     return db.query(UserModel).filter(UserModel.id == user_id).first()
+
+
+def get_user_by_username(db: Session, username: str) -> UserModel:
+    """
+    Get a user instance by username
+    """
+    # Get a user instance
+    return db.query(UserModel).filter(UserModel.username == username).first()
