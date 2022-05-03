@@ -1,4 +1,4 @@
-import re
+import datetime
 
 from pydantic import BaseModel, EmailStr, validator
 
@@ -60,8 +60,8 @@ class User(BaseModel):
     id: int
     username: str
     email: EmailStr
-    created_at: str
-    updated_at: str
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
 
     class Config:
         orm_mode = True
@@ -69,8 +69,8 @@ class User(BaseModel):
             "example": {
                 "username": "JohnDoe",
                 "email": "johndoe@mail.com",
-                "created_at": "2020-01-01T00:00:00",
-                "updated_at": "2020-01-01T00:00:00"
+                "created_at": datetime.datetime.utcnow(),
+                "updated_at": datetime.datetime.utcnow()
             }
         }
 
