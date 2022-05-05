@@ -105,3 +105,17 @@ class TokenData(BaseModel):
 
 class AccessTokenData(BaseModel):
     access_token: str
+
+
+class UserProfile(BaseModel):
+    username: str
+    profile_image: str
+
+    class Config:
+        orm_mode = True
+        schema_extra = {
+            "example": {
+                "username": "JohnDoe",
+                "profile_image": "https://www.example.com/image.jpg"
+            }
+        }
