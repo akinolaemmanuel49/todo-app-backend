@@ -35,7 +35,7 @@ def login_user(credentials: Credentials, db: Session = Depends(get_db)):
         username=user.username)
     refresh_token = authentication_handler.encode_jwt_refresh_token(
         username=user.username)
-    return {"access_token": access_token, "refresh_token": refresh_token}
+    return TokenData(access_token=access_token, refresh_token=refresh_token)
 
 
 @router.get('/users/me', response_model=Union[UserProfile, dict], tags=['User'])
@@ -51,7 +51,7 @@ def get_user_profile(credentials: HTTPAuthorizationCredentials = Security(securi
         return {"message": "User not found"}
     return {"username": user.username, "profile_image": user.profile_image}
 
-
+  
 @router.get("/users/refresh", tags=["User"], response_model=Union[AccessTokenData, Any])
 def refresh_token(credentials: HTTPAuthorizationCredentials = Security(security)):
     refresh_token = credentials.credentials
