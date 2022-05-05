@@ -1,3 +1,4 @@
+from typing import Any, Union
 from fastapi import APIRouter, Depends, Security
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
@@ -22,7 +23,7 @@ def create_user_route(user: UserCreate,
     return {'message': 'User created successfully'}
 
 
-@router.post("/users/login", tags=["User"], response_model=TokenData)
+@router.post("/users/login", tags=["User"], response_model=Union[TokenData, dict])
 def login_user(credentials: Credentials, db: Session = Depends(get_db)):
     user = get_user_by_username(db=db, username=credentials.username)
     if not user:
@@ -36,7 +37,7 @@ def login_user(credentials: Credentials, db: Session = Depends(get_db)):
     return {"access_token": access_token, "refresh_token": refresh_token}
 
 
-@router.get("/users/refresh", tags=["User"], response_model=AccessTokenData)
+@router.get("/users/refresh", tags=["User"], response_model=Union[AccessTokenData, Any])
 def refresh_token(credentials: HTTPAuthorizationCredentials = Security(security)):
     refresh_token = credentials.credentials
     new_jwt_token = authentication_handler.refresh_jwt_token(refresh_token)
