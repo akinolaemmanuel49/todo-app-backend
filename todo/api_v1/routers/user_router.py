@@ -4,7 +4,8 @@ from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from sqlalchemy.orm import Session
 
 from todo.api_v1.config import Config
-from todo.api_v1.schemas.user_schema import AccessTokenData, UserCreate, User, Credentials, TokenData, UserProfile
+from todo.api_v1.schemas.user_schema import (
+    AccessTokenData, UserCreate, User, Credentials, TokenData, UserProfile)
 from todo.api_v1.dependencies.database import get_db
 from todo.api_v1.database.actions.user_actions import (
     create_user, get_user_by_id, get_user_by_username, authentication_handler)
@@ -37,7 +38,7 @@ def login_user(credentials: Credentials, db: Session = Depends(get_db)):
     return {"access_token": access_token, "refresh_token": refresh_token}
 
 
-@router.get('/users/me', tags=['User'])
+@router.get('/users/me', response_model=Union[UserProfile, dict], tags=['User'])
 def get_user_profile(credentials: HTTPAuthorizationCredentials = Security(security),
                      db: Session = Depends(get_db)):
     """
