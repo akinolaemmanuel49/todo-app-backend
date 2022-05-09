@@ -4,10 +4,10 @@ from fastapi.responses import JSONResponse
 
 
 def get_error_message(exc):
-    msg = []
+    result = []
     for error in exc.errors():
-        msg.append(error["msg"])
-    return msg
+        result.append(error)
+    return result
 
 
 def validation_exception_handler(request: Request, exc: RequestValidationError):
