@@ -41,6 +41,9 @@ def create_user_route(user: UserCreate,
 
 @router.post("/users/login", tags=["User"], response_model=Union[TokenData, dict], responses=error_responses)
 def login_user(credentials: Credentials, db: Session = Depends(get_db)):
+    """
+    API route to login a user
+    """
     try:
         user = get_user_by_username(db=db, username=credentials.username)
         if not user:
