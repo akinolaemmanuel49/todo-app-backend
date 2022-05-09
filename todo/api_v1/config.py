@@ -22,5 +22,7 @@ class Config:
     ENCRYPTION_SCHEMES = ['bcrypt']
     JWT_SECRET_KEY = os.environ['JWT_SECRET_KEY']
     JWT_ALGORITHM = os.environ['JWT_ALGORITHM']
-    JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=30)
-    JWT_REFRESH_TOKEN_EXPIRES = timedelta(days=1)
+    JWT_ACCESS_TOKEN_EXPIRES = timedelta(
+        seconds=int(os.environ['JWT_ACCESS_TOKEN_EXPIRES']))
+    JWT_REFRESH_TOKEN_EXPIRES = timedelta(
+        minutes=int(os.environ['JWT_REFRESH_TOKEN_EXPIRES']))

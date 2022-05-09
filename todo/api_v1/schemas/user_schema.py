@@ -1,12 +1,12 @@
 import datetime
 import re
 
-from pydantic import BaseModel, EmailStr, validator
+from pydantic import BaseModel, validator, root_validator
 
 
 class UserBase(BaseModel):
     username: str
-    email: EmailStr
+    email: str
 
     @validator("username")
     def validate_username(cls, v):
@@ -42,25 +42,27 @@ class UserCreate(UserBase):
         else:
             return v
 
-    @validator("password")
-    def check_password(cls, v, values):
-        if 'password' in values and 'confirm_password' in values:
-            if values['password'] != values['confirm_password']:
-                raise ValueError("Passwords don't match")
-        return v
+    @root_validator()
+    def check_password_match(cls, values):
+        password = values["password"]
+        confirm_password = values["confirm_password"]
+
+        if password != confirm_password:
+            raise ValueError("Passwords do not match")
+        return values
 
     @validator("email")
     def check_email(cls, v):
         regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
         if (re.fullmatch(regex, v) is None):
-            raise ValueError("Invalid email.")
+            raise ValueError("Invalid email address.")
         return v
 
 
 class User(BaseModel):
     id: int
     username: str
-    email: EmailStr
+    email: str
     created_at: datetime.datetime
     updated_at: datetime.datetime
 
@@ -97,6 +99,14 @@ class Credentials(BaseModel):
             raise ValueError("Password must be less than 64 characters")
         else:
             return v
+
+    class Config:
+        schema_extra = {
+            "example": {
+                "username": "JohnDoe",
+                "password": "password"
+            }
+        }
 
 
 class TokenData(BaseModel):

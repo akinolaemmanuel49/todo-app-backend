@@ -3,9 +3,11 @@ from datetime import datetime
 from typing import Optional
 
 from passlib.context import CryptContext
-from fastapi import HTTPException
+from fastapi import HTTPException, status
+from fastapi.encoders import jsonable_encoder
 
 from todo.api_v1.config import Config
+from todo.api_v1.schemas.error_response_schema import ErrorResponse
 
 
 class Authentication:
@@ -32,9 +34,11 @@ class Authentication:
                                  algorithms=Config.JWT_ALGORITHM)
             return payload['sub']
         except jwt.ExpiredSignatureError:
-            raise HTTPException(status_code=401, detail='Token has expired')
+            raise HTTPException(status_code=401, detail=jsonable_encoder(ErrorResponse(
+                message="Token has expired", code=status.HTTP_401_UNAUTHORIZED)))
         except jwt.InvalidTokenError:
-            raise HTTPException(status_code=401, detail='Invalid token')
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=jsonable_encoder(ErrorResponse(
+                message='Invalid token', code=status.HTTP_401_UNAUTHORIZED)))
 
     def encode_jwt_refresh_token(self, username: str) -> Optional[str]:
         payload = {
@@ -52,6 +56,8 @@ class Authentication:
             new_jwt_token = self.encode_jwt_token(username)
             return new_jwt_token
         except jwt.ExpiredSignatureError:
-            raise HTTPException(status_code=401, detail='Token has expired')
+            raise HTTPException(status_code=401, detail=jsonable_encoder(ErrorResponse(
+                message="Token has expired", code=status.HTTP_401_UNAUTHORIZED)))
         except jwt.InvalidTokenError:
-            raise HTTPException(status_code=401, detail='Invalid token')
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=jsonable_encoder(ErrorResponse(
+                message='Invalid token', code=status.HTTP_401_UNAUTHORIZED)))
