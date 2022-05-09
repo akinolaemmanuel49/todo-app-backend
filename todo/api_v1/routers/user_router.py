@@ -11,7 +11,7 @@ from todo.api_v1.schemas.user_schema import (
 from todo.api_v1.schemas.error_response_schema import ErrorResponse, error_responses
 from todo.api_v1.dependencies.database import get_db
 from todo.api_v1.database.actions.user_actions import (
-    create_user, get_user_by_id, get_user_by_username, get_user_by_email, authentication_handler)
+    create_user, get_user_by_id, get_user_by_username, authentication_handler)
 
 router = APIRouter(prefix=Config.API_VERSION_STRING, tags=['User'])
 security = HTTPBearer(scheme_name='Bearer')
@@ -24,12 +24,6 @@ def create_user_route(user: UserCreate,
     API route to create a new user instance
     """
     try:
-        if get_user_by_username(db=db, username=user.username):
-            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=jsonable_encoder(
-                ErrorResponse(code=status.HTTP_409_CONFLICT, message='Username already exists')))
-        if get_user_by_email(db=db, email=user.email):
-            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=jsonable_encoder(
-                ErrorResponse(code=status.HTTP_409_CONFLICT, message='Email already exists')))
         create_user(db=db, user=user)
         return {'message': 'User created successfully'}
     except Exception as e:

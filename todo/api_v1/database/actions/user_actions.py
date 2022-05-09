@@ -19,15 +19,20 @@ def create_user(db: Session, user: UserCreate) -> None:
     try:
         # Hash the password
         user.password = authentication_handler.encode_password(user.password)
+        if get_user_by_username(db=db, username=user.username):
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=jsonable_encoder(
+                ErrorResponse(code=status.HTTP_409_CONFLICT, message='Username already exists')))
+        if get_user_by_email(db=db, email=user.email):
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=jsonable_encoder(
+                ErrorResponse(code=status.HTTP_409_CONFLICT, message='Email already exists')))
         # Create a new user instance
         user_create = UserModel(
             username=user.username, email=user.email, hashed_password=user.password)
         # Return the new user instance
         save_to_db(db=db, instance=user_create)
-    except SQLAlchemyError():
+    except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=jsonable_encoder(
-            ErrorResponse(code=status.HTTP_500_INTERNAL_SERVER_ERROR, message='Internal server error')))
+        raise e
 
 
 def get_user_by_id(db: Session, user_id: int) -> UserModel:
@@ -41,10 +46,9 @@ def get_user_by_id(db: Session, user_id: int) -> UserModel:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=jsonable_encoder(
                 ErrorResponse(code=status.HTTP_404_NOT_FOUND, message='User not found')))
         return user
-    except SQLAlchemyError():
+    except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=jsonable_encoder(
-            ErrorResponse(code=status.HTTP_500_INTERNAL_SERVER_ERROR, message='Internal server error')))
+        raise e
 
 
 def get_user_by_username(db: Session, username: str) -> UserModel:
@@ -55,14 +59,14 @@ def get_user_by_username(db: Session, username: str) -> UserModel:
         # Get a user instance
         user = db.query(UserModel).filter(
             UserModel.username == username).first()
-        if user is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=jsonable_encoder(
-                ErrorResponse(code=status.HTTP_404_NOT_FOUND, message=f'User with {username} not found')))
         return user
-    except SQLAlchemyError():
+    except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=jsonable_encoder(
-            ErrorResponse(code=status.HTTP_500_INTERNAL_SERVER_ERROR, message='Internal server error')))
+        if isinstance(e, SQLAlchemyError):
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=jsonable_encoder(
+                ErrorResponse(code=status.HTTP_500_INTERNAL_SERVER_ERROR, message='Internal server error')))
+        else:
+            raise e
 
 
 def get_user_by_email(db: Session, email: str) -> UserModel:
@@ -73,11 +77,11 @@ def get_user_by_email(db: Session, email: str) -> UserModel:
         # Get a user instance
         user = db.query(UserModel).filter(
             UserModel.email == email).first()
-        if user is None:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=jsonable_encoder(
-                ErrorResponse(code=status.HTTP_404_NOT_FOUND, message=f'User with {email} not found')))
         return user
-    except SQLAlchemyError():
+    except Exception as e:
         db.rollback()
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=jsonable_encoder(
-            ErrorResponse(code=status.HTTP_500_INTERNAL_SERVER_ERROR, message='Internal server error')))
+        if isinstance(e, SQLAlchemyError):
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=jsonable_encoder(
+                ErrorResponse(code=status.HTTP_500_INTERNAL_SERVER_ERROR, message='Internal server error')))
+        else:
+            raise e

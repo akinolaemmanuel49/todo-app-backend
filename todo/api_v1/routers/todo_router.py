@@ -89,7 +89,6 @@ def toggle_done_route(todo_id: int, credentials: HTTPAuthorizationCredentials = 
         toggle_done(db=db, todo_id=todo_id, user_id=user_id)
         return get_done_state(db=db, todo_id=todo_id, user_id=user_id)
     except Exception as e:
-
         if (e):
             raise e
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=jsonable_encoder(ErrorResponse(
