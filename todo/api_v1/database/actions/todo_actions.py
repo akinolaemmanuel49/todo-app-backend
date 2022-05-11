@@ -6,14 +6,14 @@ from todo.api_v1.database.models.todo_model import TodoModel
 from todo.api_v1.database.base_actions import save_to_db, delete_from_db
 
 
-def create_todo(db: Session, todo, user_id) -> None:
+def create_todo(db: Session, todo, user_id) -> TodoModel:
     """
     Create a new todo instance
     """
     # Create a new todo instance
     todo_create = TodoModel(todo=todo, owner_id=user_id)
     # Return the new todo instance
-    save_to_db(db=db, instance=todo_create)
+    return save_to_db(db=db, instance=todo_create)
 
 
 def get_todo(db: Session, todo_id: int, user_id: int) -> TodoModel:
@@ -83,5 +83,8 @@ def delete_todo(db: Session, todo_id: int, user_id) -> None:
     """
     # Get todo instance to delete
     todo_delete = get_todo(db=db, todo_id=todo_id, user_id=user_id)
-    # Delete todo instance
-    delete_from_db(db=db, instance=todo_delete)
+    if todo_delete:
+        # Delete todo instance
+        return delete_from_db(db=db, instance=todo_delete)
+    else:
+        raise Exception("Todo not found")

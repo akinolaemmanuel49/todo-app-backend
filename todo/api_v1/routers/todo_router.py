@@ -33,8 +33,9 @@ def create_todo_route(todo: TodoCreate,
     try:
         user_id = get_user_by_username(
             db=db, username=authentication_handler.decode_jwt_token(access_token)).id
-        create_todo(db=db, todo=todo.todo, user_id=user_id)
-        return {'message': 'Todo created successfully'}
+        data = create_todo(db=db, todo=todo.todo, user_id=user_id)
+        return {'data': Todo(id=data.id, todo=data.todo, done=data.done),
+                'message': 'Todo created successfully'}
     except Exception as e:
         if (isinstance(e, HTTPException)):
             raise e
@@ -42,7 +43,7 @@ def create_todo_route(todo: TodoCreate,
             message='Internal server error', code=status.HTTP_500_INTERNAL_SERVER_ERROR)))
 
 
-@router.get('/todos', response_model=List[Todo], tags=['Todo'], responses=error_responses)
+@ router.get('/todos', response_model=List[Todo], tags=['Todo'], responses=error_responses)
 def get_todos_by_user_route(credentials: HTTPAuthorizationCredentials = Security(security), db: Session = Depends(get_db)):
     """
     API route to get all todos instances
@@ -78,7 +79,7 @@ def get_todos_by_user_route(credentials: HTTPAuthorizationCredentials = Security
 #     return {'message': 'Todo updated successfully'}
 
 
-@router.put('/todos/{todo_id}/toggle', tags=['Todo'], response_model=bool, responses=error_responses)
+@ router.put('/todos/{todo_id}/toggle', tags=['Todo'], response_model=bool, responses=error_responses)
 def toggle_done_route(todo_id: int, credentials: HTTPAuthorizationCredentials = Security(security),
                       db: Session = Depends(get_db)):
     """API route to toggle a todo instance done state"""
@@ -95,7 +96,7 @@ def toggle_done_route(todo_id: int, credentials: HTTPAuthorizationCredentials = 
             message='Internal server error', code=status.HTTP_500_INTERNAL_SERVER_ERROR)))
 
 
-@router.get('/todos/{todo_id}/state', tags=['Todo'], response_model=bool, responses=error_responses)
+@ router.get('/todos/{todo_id}/state', tags=['Todo'], response_model=bool, responses=error_responses)
 def get_todo_done_state_route(todo_id: int, credentials: HTTPAuthorizationCredentials = Security(security),
                               db: Session = Depends(get_db)):
     """API route to get a todo instance done state"""
@@ -111,16 +112,19 @@ def get_todo_done_state_route(todo_id: int, credentials: HTTPAuthorizationCreden
             message='Internal server error', code=status.HTTP_500_INTERNAL_SERVER_ERROR)))
 
 
-@router.delete('/todos/{todo_id}', tags=['Todo'], responses=error_responses)
+@ router.delete('/todos/{todo_id}', tags=['Todo'], responses=error_responses)
 def delete_todo_route(db: Session = Depends(get_db), credentials: HTTPAuthorizationCredentials = Security(security), todo_id: int = None, ):
     """API route to delete a todo instance"""
     credentials = credentials.credentials
     try:
         user_id = get_user_by_username(
             db=db, username=authentication_handler.decode_jwt_token(credentials)).id
-        delete_todo(db=db, todo_id=todo_id, user_id=user_id)
-        return {'message': 'Todo deleted successfully'}
+        data = delete_todo(db=db, todo_id=todo_id, user_id=user_id)
+        return {'data': Todo(id=data.id, todo=data.todo, done=data.done), 'message': 'Todo deleted successfully'}
     except Exception as e:
+        if e.args[0] == 'Todo not found':
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=jsonable_encoder(
+                ErrorResponse(code=status.HTTP_404_NOT_FOUND, message='Todo not found')))
         if (isinstance(e, HTTPException)):
             raise e
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=jsonable_encoder(ErrorResponse(

@@ -26,3 +26,6 @@ class Config:
         seconds=int(os.environ['JWT_ACCESS_TOKEN_EXPIRES']))
     JWT_REFRESH_TOKEN_EXPIRES = timedelta(
         minutes=int(os.environ['JWT_REFRESH_TOKEN_EXPIRES']))
+    CLOUDINARY_CLOUD_NAME = os.environ['CLOUDINARY_CLOUD_NAME']
+    CLOUDINARY_CLOUD_API_KEY = os.environ['CLOUDINARY_CLOUD_API_KEY']
+    CLOUDINARY_CLOUD_API_SECRET = os.environ['CLOUDINARY_CLOUD_API_SECRET']
