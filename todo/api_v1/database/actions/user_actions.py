@@ -35,6 +35,20 @@ def create_user(db: Session, user: UserCreate) -> None:
         raise e
 
 
+def set_profile_image(db: Session, user: UserModel, image_url: str) -> None:
+    """
+    Set a user profile image
+    """
+    try:
+        # Set a user profile image
+        user.profile_image = image_url
+        # Return the new user instance
+        save_to_db(db=db, instance=user)
+    except Exception as e:
+        db.rollback()
+        raise e
+
+
 def get_user_by_id(db: Session, user_id: int) -> UserModel:
     """
     Get a user instance by id
