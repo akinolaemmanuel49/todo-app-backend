@@ -63,20 +63,6 @@ def get_done_state(db: Session, todo_id: int, user_id: int) -> bool:
         return None
 
 
-# def update_todo(db: Session,
-#                 todo_id: int,
-#                 todo: str,
-#                 done: bool) -> TodoModel:
-#     """
-#     Update a todo instance
-#     """
-#     # Get todo instance to update
-#     todo_update = get_todo(db=db, todo_id=todo_id)
-#     # Update todo instance
-#     todo_update.todo = todo
-#     todo_update.done = done
-#     save_to_db(db=db, instance=todo_update)
-
 def delete_todo(db: Session, todo_id: int, user_id) -> None:
     """
     Delete a todo instance
